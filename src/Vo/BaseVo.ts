@@ -25,6 +25,9 @@ class ErrorVo extends BaseVo {
     super(msg, code);
   }
   static convert(error: Error) {
+    if (error instanceof ErrorVo) {
+      return error;
+    }
     const err = new ErrorVo(error.message);
     err.error = error.name;
     return err;

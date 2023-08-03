@@ -15,20 +15,19 @@ import {
 } from "./Router";
 import ErrorHandler from "./Handler/ErrorHandler";
 import http from "http";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
+import { emit } from "process";
+import { DefaultEventsMap } from "node_modules/socket.io/dist/typed-events";
+import { ioDemo } from "./ws/ListWs";
 const { urlencoded, json } = pkg;
 const app = express();
 const expressWs = expressWss(app);
 const server = http.createServer(app);
 
-const io = new Server(server,{path: "/ws"});
-io.addListener("test2", (socket) => {
-  io.emit("add", "socket.id");
-});
-io.on("connection", (socket) => {
-  console.log("a user connected");
+const io = new Server(server, { path: "/ws" });
 
-  io.emit("newUser", socket.id);
+io.on("connection", (socket) => {
+  socket.emit("message", "socket connected");
   socket.on("test2", () => {
     socket.join("Mission1");
     console.log(socket.rooms);
@@ -40,10 +39,12 @@ io.on("connection", (socket) => {
     console.log(socket.rooms);
     io.emit("add", "socket.id");
   });
+  
   socket.on("message", (msg) => {
     socket.join("message.2");
     socket.emit("add", msg);
   });
+  ioDemo(socket);
 });
 
 app.use(cors());
