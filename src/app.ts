@@ -14,9 +14,38 @@ import {
   authMiddleware,
 } from "./Router";
 import ErrorHandler from "./Handler/ErrorHandler";
+import http from "http";
+import { Server } from "socket.io";
 const { urlencoded, json } = pkg;
 const app = express();
 const expressWs = expressWss(app);
+const server = http.createServer(app);
+
+const io = new Server(server,{path: "/ws"});
+io.addListener("test2", (socket) => {
+  io.emit("add", "socket.id");
+});
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  io.emit("newUser", socket.id);
+  socket.on("test2", () => {
+    socket.join("Mission1");
+    console.log(socket.rooms);
+    socket.rooms.forEach((room) => {
+      if (room.startsWith("Mission")) {
+        socket.leave(room);
+      }
+    });
+    console.log(socket.rooms);
+    io.emit("add", "socket.id");
+  });
+  socket.on("message", (msg) => {
+    socket.join("message.2");
+    socket.emit("add", msg);
+  });
+});
+
 app.use(cors());
 initPassport();
 
@@ -25,28 +54,28 @@ app.engine("html", ejs.renderFile);
 app.set("view engine", "html");
 app.use(urlencoded({ extended: true }));
 app.use(json());
+app.use(ListWs());
+// ListWs(expressWs);
 
 app.post("/login", (req, res) => {
   const { user } = req.body;
   const token = generateUserToken(user);
   res.send(token);
 });
-
 // google oauth驗證路由 (必須在驗證器前)
 app.use("/auth", googleRouter);
+
+ChatWs(expressWs);
 
 // token驗證並取得userinfo 供後續使用
 app.use(authMiddleware);
 
 app.use("/member", MemberRouter);
 app.use("/demo", DemoRouter);
-app.get("/", (req, res) => {
-  res.render("./index.html");
-});
+// app.get("/", (req, res) => {
+//   res.render("./index.html");
+// });
 app.use(ErrorHandler);
-
-ListWs(expressWs);
-ChatWs(expressWs);
 
 (async () => {
   try {
@@ -61,8 +90,8 @@ ChatWs(expressWs);
     console.error("DB Connection Error");
   }
 
-  app.listen(port, () => {
-    console.log(`[server] http://localhost:${port}`);
-    
-  });
+  server.listen(port);
+  // app.listen(port, () => {
+  //   console.log(`[server] http://localhost:${port}`);
+  // });
 })();

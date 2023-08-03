@@ -30,10 +30,8 @@ router.get("/cardBox", async (req, res) => {
 router.get("/mission", async (req, res, next) => {
   const user = req.body.user;
   try {
-    const defaultMission = await MissionModel.findOne({
-      _id: "64c8f10135840ecb570c8bc7",
-    });
-    if (!defaultMission.editor.includes(user.id)) {
+    const defaultMission = await MissionModel.findOne();
+    if (!defaultMission.editor.includes(user._id)) {
       defaultMission.editor.push(user);
       // console.log(await defaultMission.populate("editor"));
       await defaultMission.save();
@@ -66,6 +64,10 @@ router.put("/card", async (req, res) => {
   cardBox.addCard(body.cardName);
   res.send(cardBox);
 });
+
+// router.get("/test",()=>{
+  
+// })
 
 
 export default router;

@@ -1,9 +1,10 @@
+import { STATUSCODE } from "@/constants/code";
 class BaseVo {
-  status: number = statusNumber.success;
+  status: STATUSCODE = STATUSCODE.success;
   message: string;
   display: boolean = false;
 
-  constructor(msg?: string, code?: number) {
+  constructor(msg?: string, code?: STATUSCODE) {
     if (code) {
       this.status = code;
     }
@@ -18,11 +19,10 @@ class BaseVo {
 }
 
 class ErrorVo extends BaseVo {
-  status = 500;
-  error: string = "error";
-  constructor(msg: string) {
-    super();
-    this.message = msg;
+  status = STATUSCODE.knownError;
+  error: string = "Error";
+  constructor(msg: string, code?: STATUSCODE) {
+    super(msg, code);
   }
   static convert(error: Error) {
     const err = new ErrorVo(error.message);
@@ -33,15 +33,12 @@ class ErrorVo extends BaseVo {
 
 class LoginError extends ErrorVo {
   error = "login error";
-  status = 401;
+  status = STATUSCODE.loggingError;
   constructor(msg: string) {
     super(msg);
   }
 }
 
-enum statusNumber {
-  success = 0,
-  loggingError = 2001,
-}
+const deniedRes = new BaseVo("您沒有權限", STATUSCODE.denied);
 
-export { BaseVo, ErrorVo, LoginError };
+export { BaseVo, ErrorVo, LoginError, deniedRes };

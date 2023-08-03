@@ -1,12 +1,20 @@
-import { CardBoxModel, Mission, MissionModel } from "@/Models/MissionModel";
+import {
+  Card,
+  CardBox,
+  CardBoxModel,
+  CardModel,
+  Mission,
+  MissionModel,
+} from "@/Models/MissionModel";
 import expressWs from "express-ws";
 import ws from "ws";
 import { decodedToken } from "../tools/UserTokenUtils";
 import { JwtPayload } from "jsonwebtoken";
-import { UserModel } from "../Models/UserModel";
+import { User, UserModel } from "../Models/UserModel";
 import { ErrorVo, LoginError } from "@/Vo/BaseVo";
 import { uuid } from "@/class/todo";
 import { DocumentType } from "@typegoose/typegoose";
+import { Router } from "express";
 
 const wsList: {
   [prop: string]: { ws: WebSocket2; missionId: string };
@@ -33,105 +41,149 @@ const wsList: {
     };
   },
 };
+const router = Router();
 
-export default function (expressWs: expressWs.Instance) {
-  expressWs.app.ws("/ws2", async (ws: WebSocket2, req) => {
+export default () =>
+  router.ws("/ws2", async (ws: WebSocket2, req) => {
+    ws = upgrade(ws);
     const { missionId } = req.query;
-    ws.sendJson = sendJson;
-    ws.emit2 = emit2;
-    let user: { _id: import("mongoose").Types.ObjectId };
+    let user: DocumentType<User> = await wsWrap(ws, getUserByWs);
+    if (!user) return;
     const wsId = uuid();
-    let mission: DocumentType<Mission>;
-    wsList[wsId] = {
+    wsList[user.id] = {
       ws,
       missionId: missionId as string,
     };
-    try {
-      const protocol = ws.protocol;
-      const token = decodeURI(protocol);
-      const payload = decodedToken(token) as JwtPayload;
-      user = await UserModel.findOne({ email: payload?._doc.email });
-      mission = await MissionModel.findOne({ _id: missionId });
-      await mission.populate({
-        path: "cardBoxes",
-        populate: { path: "cards" },
-      });
-      if (!mission) {
-        ws.sendJson(new ErrorVo("查無資料"));
-        ws.close();
-      }
-      if (
-        !user._id.equals(mission?.owner?._id) &&
-        !mission.editor.includes(user._id)
-      ) {
-        ws.sendJson(new ErrorVo("權限不足"));
-        ws.close();
-      }
-      ws.emit2("getMission", mission);
-    } catch (error) {
-      console.log(error);
-      ws.sendJson(new LoginError("登入異常"));
-      ws.close();
-    }
-
-    ws.on("message", (data: string) => {
-      console.log("message");
-      const { event, payload } = JSON.parse(data);
-      ws.emit(event, payload);
-    });
-
-    ws.on("listChange", async (obj) => {
-      console.log("listChange");
-      const cardBox = await CardBoxModel.findOne({ _id: obj._id });
-      cardBox.cards = obj.cards;
-      await cardBox.save();
-      // sendByMId(missionId as string, cardBox);
-    });
+    let mission = await wsWrap(ws, findMissionByIdAndUser, missionId, user);
+    if (!mission) return;
+    ws.emit2("getMission", mission);
 
     ws.on("addCard", async (payload) => {
-      try {
-        const { boxId, cardName } = payload;
-        const box = await CardBoxModel.findOne({ _id: boxId });
-        await box.addCard(cardName);
-        await box.populate("cards");
-        sendByMId(missionId as string, "cardChange", box);
-      } catch (error) {
-        console.log(error);
-      }
+      wsWrap(ws, addCard, payload, mission.id);
     });
+
     ws.on("changeIndex", async (payload) => {
-      console.log("changeIndex", payload);
-      const { _id, cards } = payload;
-      try {
-        const cardBox = await CardBoxModel.findOne({ _id: _id });
-        cardBox.cards = cards;
-        await cardBox.save()
-        await cardBox.populate("cards");
-        sendByMId(missionId as string, "cardChange", cardBox);
-        
-      } catch (error) {
-        console.log(error)
-      }
+      await wsWrap(ws, changeIndex, payload, mission);
     });
 
-    ws.on("addCardBox", async (payload: { boxName: string }) => {
-      console.log("addCardBox", payload.boxName);
-      try {
-        await mission.addCardBox(payload.boxName);
-        await mission.populate("cardBoxes");
-        // console.log(mission);
-        sendByMId(missionId as string, "addCardBox", mission);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
+    ws.on("changeCard", async (payload) => {
+      wsWrap(ws, changeCard, payload, mission);
     });
 
+    ws.on("addCardBox", async ({ boxName }: { boxName: string }) => {
+      wsWrap(ws, addCardBox, boxName, mission);
+    });
     ws.on("close", () => {
-      delete wsList[wsId];
+      if (wsList[user?.id]) {
+        delete wsList[user.id];
+      }
     });
   });
-}
+const wsWrap = async (
+  ws: WebSocket2,
+  func: Function,
+  ...args: Array<unknown>
+) => {
+  try {
+    return await func(ws, ...args);
+  } catch (error) {
+    ws.emit("error", error);
+  }
+};
+
+const changeCard = async (ws: WebSocket2, reqCard: DocumentType<Card>) => {
+  const card = await CardModel.findById(reqCard.id);
+  if (!card) {
+    throw new ErrorVo("查無資料");
+  }
+  Object.assign(card, reqCard);
+  await card.save();
+};
+
+const findMissionByIdAndUser = async (
+  ws: WebSocket2,
+  missionId: string,
+  user: DocumentType<User>
+) => {
+  let mission = await MissionModel.findOne({ _id: missionId });
+  await mission.populate({
+    path: "cardBoxes",
+    populate: { path: "cards" },
+  });
+  if (!mission) {
+    ws.emit("error", new ErrorVo("查無資料"));
+    ws.close();
+  }
+  if (
+    !user._id.equals(mission?.owner?._id) &&
+    !mission.editor.includes(user._id)
+  ) {
+    ws.emit("error", new ErrorVo("權限不足"));
+    ws.close();
+  }
+  return mission;
+};
+
+const addCard = async (
+  ws: WebSocket2,
+  payload: { boxId: string; cardName: string },
+  missionId: string
+) => {
+  const { boxId, cardName } = payload;
+  const box = await CardBoxModel.findOne({ _id: boxId });
+  await box.addCard(cardName);
+  await box.populate("cards");
+  sendByMId(missionId, "cardChange", box);
+};
+
+const upgrade = (ws: WebSocket2) => {
+  ws.sendJson = sendJson;
+  ws.emit2 = emit2;
+  ws.on("error", (error) => {
+    ws.emit2("error", error);
+  });
+  ws.on("message", (data: string) => {
+    const { event, payload } = JSON.parse(data);
+    ws.emit(event, payload);
+  });
+
+  return ws;
+};
+const changeIndex = async (
+  ws: WebSocket2,
+  reqCardBox: DocumentType<CardBox>,
+  mission: DocumentType<Mission>
+) => {
+  const { _id, cards } = reqCardBox;
+  const cardBox = await CardBoxModel.findOne({ _id: _id });
+  cardBox.cards = cards;
+  await cardBox.save();
+  await cardBox.populate("cards");
+  sendByMId(mission.id as string, "cardChange", cardBox);
+};
+const addCardBox = async (
+  ws: WebSocket2,
+  boxName: string,
+  mission: DocumentType<Mission>
+) => {
+  await mission.addCardBox(boxName);
+  await mission.populate({ path: "cardBoxes", populate: { path: "cards" } });
+  sendByMId(mission.id as string, "addCardBox", mission);
+};
+
+const getUserByWs = async (ws: WebSocket2) => {
+  try {
+    const protocol = ws.protocol;
+    const token = decodeURI(protocol);
+    const payload = decodedToken(token) as JwtPayload;
+    const user = await UserModel.findOne({ email: payload?._doc.email });
+    return user;
+  } catch (error) {
+    ws.emit("error", new LoginError("登入異常"));
+    ws.close();
+  }
+};
+
 interface WebSocket2 extends ws {
   sendJson?: (obj: object) => void;
   emit2?: (this: WebSocket2, event: string, payload: object) => void;
@@ -149,7 +201,6 @@ function emit2(this: WebSocket2, event: string, payload: object) {
 }
 
 const sendByMId = (mId: string, event: string, payload: object) => {
-  console.log(payload);
   for (const wsObj of wsList) {
     if (wsObj.missionId == mId) {
       wsObj.ws.emit2(event, payload);

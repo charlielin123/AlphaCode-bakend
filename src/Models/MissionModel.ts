@@ -82,4 +82,4 @@ class Card {
 const MissionModel = getModelForClass(Mission);
 const CardBoxModel = getModelForClass(CardBox);
 const CardModel = getModelForClass(Card);
-export { MissionModel, CardBoxModel, CardModel, Mission };
+export { MissionModel, CardBoxModel, CardModel, Mission ,CardBox,Card};

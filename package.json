@@ -26,6 +26,7 @@
     "mongoose": "^7.4.0",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
+    "socket.io": "^4.7.2",
     "tsconfig-paths": "^4.2.0",
     "ws": "^8.13.0"
   },
@@ -37,7 +38,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^20.4.2",
-    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.45.0",
     "ts-node": "^10.9.1"

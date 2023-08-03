@@ -9,6 +9,7 @@ export default (
 ) => {
   if ((error as ErrorVo)?.status) {
     res.send(error || "error");
+    return;
   }
   error = ErrorVo.convert(error as Error);
   res.send(error || "error");
