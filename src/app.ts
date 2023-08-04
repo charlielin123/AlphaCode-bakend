@@ -18,31 +18,23 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 import { emit } from "process";
 import { DefaultEventsMap } from "node_modules/socket.io/dist/typed-events";
-import { ioDemo } from "./ws/ListWs";
+import { ioDemo } from "./ws/DemoWs";
+
 const { urlencoded, json } = pkg;
 const app = express();
 const expressWs = expressWss(app);
 const server = http.createServer(app);
 
-const io = new Server(server, { path: "/ws" });
+const io = new Server(server, { path: "/ws" ,cors: {
+  origin: "*",
+}});
 
 io.on("connection", (socket) => {
+  // console.log(socket.id);
   socket.emit("message", "socket connected");
-  socket.on("test2", () => {
-    socket.join("Mission1");
-    console.log(socket.rooms);
-    socket.rooms.forEach((room) => {
-      if (room.startsWith("Mission")) {
-        socket.leave(room);
-      }
-    });
-    console.log(socket.rooms);
-    io.emit("add", "socket.id");
-  });
-  
+
+
   socket.on("message", (msg) => {
-    socket.join("message.2");
-    socket.emit("add", msg);
   });
   ioDemo(socket);
 });
