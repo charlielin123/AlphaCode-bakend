@@ -19,6 +19,7 @@ import { Server, Socket } from "socket.io";
 import { emit } from "process";
 import { DefaultEventsMap } from "node_modules/socket.io/dist/typed-events";
 import { ioDemo } from "./ws/DemoWs";
+import { ErrorVo } from "./Vo/BaseVo";
 
 const { urlencoded, json } = pkg;
 const app = express();
@@ -35,6 +36,7 @@ io.on("connection", (socket) => {
 
 
   socket.on("message", (msg) => {
+    socket.broadcast.emit("error", new ErrorVo("msg"));
   });
   ioDemo(socket);
 });
