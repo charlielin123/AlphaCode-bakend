@@ -65,9 +65,9 @@ router.put("/card", async (req, res) => {
   res.send(cardBox);
 });
 
-// router.get("/test",()=>{
-  
-// })
+router.get("/test",(req, res)=>{
+  res.send("test")
+})
 
 
 export default router;

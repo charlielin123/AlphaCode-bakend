@@ -102,18 +102,8 @@ const sendByMId = (socket: Socket, event: string, ...obj: any[]) => {
   socket.emit(event, ...obj);
 };
 
-export const ioDemo = (
-  ws: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
-) => {
+export const ioDemo = (ws: Socket) => {
   const baseUrl = "/mission";
-  let mId = null;
-  ws.on("setMid", (id) => {
-    mId = id;
-  });
-  ws.on("broadcastByMid", (event, ...payload: any[]) => {
-    ws.to("Mission." + mId).emit(event, ...payload);
-    ws.emit(event, ...payload);
-  });
 
   listeners.map((r) => {
     ws.on(baseUrl + r.url, async (...args) => {
