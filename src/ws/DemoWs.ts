@@ -61,7 +61,7 @@ const addCard2: ioListener = {
     const box = await CardBoxModel.findOne({ _id: boxId });
     await box.addCard(cardName);
     await box.populate("cards");
-    sendByMId(ws, "getCard", box);
+    sendByMId(ws, "getCardBox", box);
     ws.emit("message", "success");
   },
 };
