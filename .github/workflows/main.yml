@@ -17,12 +17,12 @@ jobs:
         uses: actions/setup-node@v3.7.0
         with:
           node-version: '18'
-          
+
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
-        run: npm run build
+      - name: tsc
+        uses: icrawl/action-tsc@v1
 
   deploy:
     name: Deploy
