@@ -6,7 +6,7 @@ const app = express();
 
 appSetup(app);
 app.use("/api", (req, res) => {
-  res.send('fuck')
+  res.send('fuck you')
 })
 app.use(routerStartup);
 
