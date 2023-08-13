@@ -30,11 +30,17 @@ jobs:
           name: production-files
           path: ./dist
 
-      - name: Deploy to GitHub Pages
-        run: git checkout -b dev
 
       - name: Checkout dev branch
         run: git checkout -b dev
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production-files
+          path: ./dist
+
+
 
       - name: list
         run: ls
