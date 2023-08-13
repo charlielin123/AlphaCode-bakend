@@ -26,10 +26,10 @@ jobs:
         uses: icrawl/action-tsc@v1
 
       - name: checkFiles
-        uses: ls
+        run: ls
 
       - name: checkFiles
-        uses: ls ./src/
+        run: ls ./src/
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v2
