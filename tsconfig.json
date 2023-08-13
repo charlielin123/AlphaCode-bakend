@@ -20,6 +20,7 @@
     "sourceMap": true,
     // "lib": ["esnext"],
   },
-  "include": ["**/*.ts","./tsconfig.json","node_modules/**/*","vercel.json"]
+  "include": ["**/*.ts","./tsconfig.json","node_modules/**/*","vercel.json"],
+  "exclude": ["./node_modules/tsconfig-paths","./dist"]
   
 }
