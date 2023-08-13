@@ -2,13 +2,12 @@
   "name": "demo",
   "version": "1.0.0",
   "description": "",
-  "main": "./json/app.js",
   "scripts": {
     "test": "dotenv -e .env.dev ts-node ./app.ts",
-    "start": " node -r dotenv/config ./js/app.js",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "vercel build": "echo hi",
-    "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts"
+    "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts",
+    "start": " ts-node -r tsconfig-paths/register ./src/app.ts"
   },
   "author": "",
   "license": "ISC",

@@ -12,11 +12,12 @@
     "typeRoots": ["./src/typings", "./node_modules/@types"],
     "types": [],
     "declaration": true,
-    "outDir": "./js/",
+    "outDir": "./dist/",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     // "lib": ["esnext"],
   },
   "include": ["**/*.ts","./tsconfig.json"]
