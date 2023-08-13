@@ -4,11 +4,12 @@
   "description": "",
   "scripts": {
     "test": "dotenv -e .env.dev ts-node ./app.ts",
-    "build": "tsc && tsc-alias",
+    "build": "rimraf dist && tsc && tsc-alias",
     "vercel build": "echo hi",
     "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts",
-    "start": " ts-node -r tsconfig-paths/register ./src/app.ts"
+    "start": " ts-node -r tsconfig-paths/register ./src/app.ts",
   },
+  "pre-commit":"build",
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -44,6 +45,8 @@
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.45.0",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^5.0.1",
     "ts-node": "^10.9.1"
   }
 }
