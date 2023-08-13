@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "rimraf dist",
-    "build": "./node_modules/.bin/tsc && tsc-alias",
+    "build": "tsc && tsc-alias",
     "vercel build": "echo hi",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
