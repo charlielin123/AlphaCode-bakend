@@ -23,13 +23,9 @@ jobs:
 
       - name: tsc
         uses: icrawl/action-tsc@v1
-
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
+      
+      - name: test
+        run: ls -la
 
       - name: test2
         uses: actions/checkout@v3.5.3
@@ -38,8 +34,7 @@ jobs:
           
       - name: testend
         run: echo done
-      # - name: test
-      #   run: ls -la
+     
 
       # - name: Checkout dev branch
       #   run: git checkout -b dev
