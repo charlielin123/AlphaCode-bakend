@@ -6,11 +6,12 @@ import socketIOSetup from "./socketIOSetup";
 import ejs from "ejs";
 import cors from "cors";
 import { initPassport } from "@/tools/Auth";
+import { config } from "dotenv";
 
 const port = process.env.PORT || 8888;
 
 const appSetup = (app: Express) => {
-
+  config();
   // 跨域設定
   app.use(cors());
   app.use(urlencoded({ extended: true }));
@@ -18,7 +19,6 @@ const appSetup = (app: Express) => {
   // 模板引擎
   app.engine("html", ejs.renderFile);
   app.set("view engine", "html");
-
 
   const server = http.createServer(app);
 
