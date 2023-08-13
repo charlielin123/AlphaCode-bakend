@@ -6,3 +6,5 @@ const app = express();
 
 appSetup(app);
 app.use(routerStartup);
+
+export default app;
