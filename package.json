@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "dotenv -e .env.dev ts-node ./app.ts",
+    "test": "rimraf dist",
     "build": "rimraf dist && tsc && tsc-alias",
     "vercel build": "echo hi",
     "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts",
-    "start": " ts-node -r tsconfig-paths/register ./src/app.ts",
+    "start": " ts-node -r tsconfig-paths/register ./src/app.ts"
   },
-  "pre-commit":"build",
+  "pre-commit":"test",
   "author": "",
   "license": "ISC",
   "dependencies": {
