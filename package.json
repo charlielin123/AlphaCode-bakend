@@ -2,6 +2,7 @@
   "name": "demo",
   "version": "1.0.0",
   "description": "",
+  "main": "./src/app.ts",
   "scripts": {
     "test": "dotenv -e .env.dev ts-node ./app.ts",
     "start": " node -r dotenv/config ./js/app.js",
