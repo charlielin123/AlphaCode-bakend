@@ -5,8 +5,7 @@
   "scripts": {
     "test": "dotenv -e .env.dev ts-node ./app.ts",
     "start": " tsc && dotenv -e .env.dev node ./js/app.js",
-    "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts"
-  },
+    "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts"},
   "author": "",
   "license": "ISC",
   "dependencies": {

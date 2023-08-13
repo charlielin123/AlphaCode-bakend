@@ -21,7 +21,7 @@ router.use("/**", async (req, res, next) => {
     if (error?.name == "JsonWebTokenError") {
       next(new LoginError("登入異常，請重新嘗試"));
     } else {
-      next(error);
+      next(new LoginError(error.message));
     }
   }
 });

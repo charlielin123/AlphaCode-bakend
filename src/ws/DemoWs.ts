@@ -65,6 +65,17 @@ const addCard2: ioListener = {
     ws.emit("message", "success");
   },
 };
+const addCardBox: ioListener = {
+  url: "/addCardBox",
+  func: async (ws, payload: { boxName: string; mId: string }) => {
+    const { mId, boxName } = payload;
+    const mission = await MissionModel.findOne({ _id: mId });
+    await mission.addCardBox(boxName);
+    await mission.populate({ path: "cardBoxes", populate: { path: "cards" } });
+    sendByMId(ws, "getMission", mission);
+    ws.emit("getMission", mission);
+  },
+};
 
 const changeCard2: ioListener = {
   url: "/changeCard",
@@ -127,4 +138,5 @@ const listeners: ioListener[] = [
   addCard2,
   changeCard2,
   changeIndex,
+  addCardBox
 ];

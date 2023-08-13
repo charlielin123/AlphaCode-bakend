@@ -19,7 +19,7 @@ authRouter.get(
   (req: Request, res: Response) => {
     console.log("callback");
     const token = generateUserToken(req.user);
-    res.send(token);
+    res.send({token});
   }
 );
 export default authRouter;
