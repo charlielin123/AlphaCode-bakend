@@ -7,33 +7,46 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3.5.3
+      - name: Checkout repo
+        uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3.7.0
+      - name: Setup Node
+        uses: actions/setup-node@v1
         with:
-          node-version: "18"
+          node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        uses: bahmutov/npm-install@v1
 
-      - name: tsc
-        uses: icrawl/action-tsc@v1
+      - name: Build project
+        run: npm run build
 
-      - name: Checkout dev branch
-        uses: actions/checkout@v2
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v2
         with:
-          ref: dev
-          path: dev
-      # - name: add
-      #   run: git add dist
+          name: production-files
+          path: ./dist
 
-      # - name: commit
-      #   run: git commit -m 'test123'
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
-      # - name: push
-      #   run: git push origin dev
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production-files
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: dev
