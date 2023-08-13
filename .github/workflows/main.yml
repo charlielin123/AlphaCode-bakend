@@ -24,29 +24,11 @@ jobs:
       - name: tsc
         uses: icrawl/action-tsc@v1
 
-      - name: Upload production-ready build files
-        uses: actions/upload-artifact@v2
-        with:
-          name: production-files
-          path: ./dist
-
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
       - name: Checkout dev branch
-        run: git checkout -b dev
-
-      - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/checkout@v2
         with:
-          name: production-files
-          path: ./dist
-
-      - name: list
-        run: ls
+          ref: dev
+          path: dev
       # - name: add
       #   run: git add dist
 
