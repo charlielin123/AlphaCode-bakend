@@ -6,6 +6,8 @@
   "scripts": {
     "test": "dotenv -e .env.dev ts-node ./app.ts",
     "start": " node -r dotenv/config ./js/app.js",
+    "build": "tsc",
+    "vercel build": "echo hi",
     "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts"
   },
   "author": "",
