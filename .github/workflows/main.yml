@@ -30,14 +30,25 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout dev branch
-        run: git checkout -b dev
 
-      - name: add
-        run: git add dist
+      - name: test2
+        uses: actions/checkout@v3.5.3
+        with:    
+          ref: 'dev'
+          
+      - name: testend
+        run: echo done
+      # - name: test
+      #   run: ls -la
 
-      - name: commit
-        run: git commit -m 'test123'
+      # - name: Checkout dev branch
+      #   run: git checkout -b dev
 
-      - name: push
-        run: git push origin dev
+      # - name: add
+      #   run: git add dist
+
+      # - name: commit
+      #   run: git commit -m 'test123'
+
+      # - name: push
+      #   run: git push origin dev
