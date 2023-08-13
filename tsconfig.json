@@ -19,5 +19,5 @@
     "skipLibCheck": true,
     // "lib": ["esnext"],
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts","./tsconfig.json"]
 }
