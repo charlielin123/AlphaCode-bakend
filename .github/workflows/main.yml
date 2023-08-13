@@ -22,9 +22,13 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
-      - name: tsc
-        uses: icrawl/action-tsc@v1
+      - name: build
+        run: npm i typescript -g
+      - run: npm i tsc -g
 
+      - name: build
+        run: npm run build
+        
       - name: checkFiles
         run: ls
 
