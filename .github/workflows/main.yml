@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5.3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3.7.0
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
@@ -24,20 +24,20 @@ jobs:
       - name: Build project
         run: npm run build
 
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
       - name: Checkout dev branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5.3
         with:
           ref: dev
           path: dev
 
       - name: Copy build to dev branch
-        run: cp -R dist dev/
+        run: cd dist
 
-      - name: Commit and push changes to dev branch
-        run: |
-          cd dev
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Update build from main branch"
-          git push origin dev
+      - name: show list
+        run: ls -la
