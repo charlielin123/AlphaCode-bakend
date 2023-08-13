@@ -31,13 +31,13 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout dev branch
-        uses: actions/checkout@v3.5.3
-        with:
-          ref: dev
-          path: dev
+        run: git checkout -b dev
 
-      - name: Copy build to dev branch
-        run: cd dist
+      - name: add
+        run: git add dist
 
-      - name: show list
-        run: ls -la
+      - name: commit
+        run: git commit -m 'test123'
+
+      - name: push
+        run: git push origin dev
