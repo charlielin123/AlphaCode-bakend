@@ -22,4 +22,7 @@ router.use(authMiddleware);
 router.use("/member", MemberRouter);
 router.use("/demo", DemoRouter);
 router.use(ErrorHandler);
+router.use("/api", (req, res) => {
+  res.send('fuck')
+})
 export default router;
