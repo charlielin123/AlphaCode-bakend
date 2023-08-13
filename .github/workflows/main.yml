@@ -1,0 +1,43 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Checkout dev branch
+        uses: actions/checkout@v2
+        with:
+          ref: dev
+          path: dev
+
+      - name: Copy build to dev branch
+        run: cp -R dist dev/
+
+      - name: Commit and push changes to dev branch
+        run: |
+          cd dev
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update build from main branch"
+          git push origin dev
