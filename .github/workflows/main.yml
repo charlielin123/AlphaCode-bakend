@@ -25,15 +25,14 @@ jobs:
       - run: npm install -g yarn
 
       - name: build
-        run: | 
+        run: |
           yarn 
           yarn build
-        
-      - name: checkFiles
-        run: ls
+          yarn copy
 
       - name: checkFiles
-        run: ls ./src/
+        run: ls ./dist
+
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v2
