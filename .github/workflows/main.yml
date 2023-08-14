@@ -19,12 +19,9 @@ jobs:
         with:
           host: ec2-54-65-139-85.ap-northeast-1.compute.amazonaws.com
           key: ${{ secrets.SSHPK }}
-          script: 
+          first_ssh: |
             ls
 
-        
-      - name: echo
-        run: echo ${{ secrets.SSHPK }}
 
   #     - name: Setup Node
   #       uses: actions/setup-node@v3.7.0
