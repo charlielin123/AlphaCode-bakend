@@ -27,7 +27,7 @@ jobs:
       - name: build
         run: |
           yarn 
-          yarn build
+          yarn tsc
           yarn copy
 
       - name: checkFiles
@@ -51,7 +51,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: production-files
-          path: ./dist
+          path: ./dist   
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
