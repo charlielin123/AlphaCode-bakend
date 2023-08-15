@@ -2,8 +2,8 @@ name: Build and Deploy
 
 on:
   push:
-    # branches:
-    #   - main
+    branches:
+      - deploy
 
 jobs:
   build:
@@ -17,11 +17,18 @@ jobs:
       - name: ssh-scp-ssh-pipelines
         uses: easingthemes/ssh-deploy@v4.1.8
         with:
-          REMOTE_HOST: ec2-54-65-139-85.ap-northeast-1.compute.amazonaws.com
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
           SSH_PRIVATE_KEY: ${{ secrets.SSHPK }}
-          REMOTE_USER: ec2-user
+          REMOTE_USER: ${{ secrets.SSH_USER }}
           SCRIPT_BEFORE: |
-            ls
+            cd /home/ec2-user/nodejs
+            sh ./kill.sh
+            cd ./AlphaCode-bakend/
+            git pull
+            nvm i 16
+            nohup(npm start)
+
+
 
 
   #     - name: Setup Node
