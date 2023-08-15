@@ -21,7 +21,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSHPK }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
           TARGET : '/home/ec2-user/AlphaCode/'
-          SCRIPT_BEFORE: |
+          SCRIPT_AFTER: |
             cd /home/ec2-user/nodejs
             sh ./kill.sh
 
