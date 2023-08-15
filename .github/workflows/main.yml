@@ -23,10 +23,6 @@ jobs:
           SCRIPT_BEFORE: |
             cd /home/ec2-user/nodejs
             sh ./kill.sh
-            cd ./AlphaCode-bakend/
-            git pull
-            nvm i 16
-            nohup(npm start)
 
 
 
