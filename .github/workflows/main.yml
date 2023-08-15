@@ -20,6 +20,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           SSH_PRIVATE_KEY: ${{ secrets.SSHPK }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
+          EXCLUDE: .env
           TARGET : '/home/ec2-user/AlphaCode/'
           SCRIPT_AFTER: |
             cd /home/ec2-user/nodejs
