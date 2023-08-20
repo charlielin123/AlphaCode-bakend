@@ -4,12 +4,13 @@
   "description": "",
   "scripts": {
     "test": "rimraf dist",
-    "build": "tsc && tsc-alias",
+    "tsc": "tsc && tsc-alias",
     "vercel build": "echo hi",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "dev": "nodemon --exec ts-node -r dotenv/config --exec ts-node -r tsconfig-paths/register ./src/app.ts",
-    "start": " ts-node -r tsconfig-paths/register ./src/app.ts"
+    "start": " ts-node -r tsconfig-paths/register ./src/app.ts",
+    "copy":"cp package.json tsconfig.json vercel.json ./dist/"
   },
   "author": "",
   "license": "ISC",
