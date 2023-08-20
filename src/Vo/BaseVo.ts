@@ -42,6 +42,8 @@ class LoginError extends ErrorVo {
   }
 }
 
+const successRes = new BaseVo("success");
+
 const deniedRes = new BaseVo("您沒有權限", STATUSCODE.denied);
 
-export { BaseVo, ErrorVo, LoginError, deniedRes };
+export { BaseVo, ErrorVo, LoginError, deniedRes,successRes };
