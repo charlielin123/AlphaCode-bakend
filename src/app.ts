@@ -10,4 +10,12 @@ app.use("/api", (req, res) => {
 })
 app.use(routerStartup);
 
+const app2 = express();
+app2.use("/survey", (req, res) => {
+  res.send('survey')
+});
+
+app.listen(8087, () => {
+  console.log("server start");
+})
 export default app;
